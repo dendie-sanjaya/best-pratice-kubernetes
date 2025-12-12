@@ -76,7 +76,6 @@ This is the management layer that decides where things should run and keeps the 
 | Secret      | An object used to store sensitive data securely, such as passwords or API keys.     | Delivers secure credentials to applications running in Pods.                  |
 | Namespace   | A virtual way to divide the cluster's resources into separate, isolated rooms.      | Helps organize and separate teams or projects running on the same cluster (e.g., separating the production environment from testing). |
 
----
 
 ## 3.4 Node Worker
 
