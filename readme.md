@@ -286,7 +286,7 @@ Below are the basic steps to deploy your application and resources to your GKE c
 
     ![Test App via Ingress IP](./ss/gke-dep-ingriss3.jpg)
 
-    ![App Response via Ingress](./ss/gke-dep-ingriss3.jpg)
+    ![App Response via Ingress](./ss/gke-dep-ingriss4.jpg)
 
 9. **Set Up DNS (A Record) for Your Domain**
 
