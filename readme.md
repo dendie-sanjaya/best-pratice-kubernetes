@@ -96,3 +96,204 @@ These are the machines where your applications actually run.
 |------------------------|----------------------------------------------------------------------------|--------------------------------------------------------------------------|
 | PersistentVolume (PV / vol 1)  | The actual piece of storage hardware (like a cloud disk) made available to the cluster. | Provides storage that lasts longer than a Pod. The data stays safe even if the application Pod is deleted. |
 | PersistentVolumeClaim (PVC) | A developer's request for storage (e.g., "I need 10GB of fast storage"). | Acts as a claim that links a Pod to an available PV.                     |
+
+
+# 4. Mapping YAML ke to Resource GKE
+
+The files you provided in the gke folder represent the standard Kubernetes resources required for a complex     application deployment :
+
+ 1. **configmap.yaml**: Environment configuration.
+ 2. **deployment.yaml**: The application code/replicas.
+ 3. **ingress.yaml**: External access rules (HTTP/HTTPS).
+ 4. **secret-tls.yaml**: SSL certificate storage.
+ 5. **secret.yaml**: Sensitive data storage (e.g., database passwords).
+ 6. **service-1.yaml, service-2.yaml**: Internal networking to expose Pods.
+ 7. **statefulset.yaml**: Running stateful applications (e.g., databases like Redis or Kafka).
+
+
+![Screen Shoot](./ss/maping-yaml.jpg)    
+
+
+# 5. Basic Setup GKE
+
+1. **Create a New GCP Project**  
+    Go to the Google Cloud Console and create a new project. This project will be used to manage all your GKE resources and billing.
+
+    ![Screen Shoot](./ss/gke-setup-1.jpg)
+
+2. **Choose the GKE Product**  
+    In the Google Cloud Console, navigate to the Kubernetes Engine section and select the GKE product to start setting up your Kubernetes cluster.
+
+    ![Screen Shoot](./ss/gke-setup-2.jpg)
+
+
+3. **Activate Billing**  
+    Enable billing for your project using a debit or credit card. This is required to use GKE and other Google Cloud resources.
+
+    ![Screen Shoot](./ss/gke-setup-3.jpg)
+
+
+4. **Access the GKE Dashboard**  
+    Once billing is active, you can access the GKE dashboard to create and manage your Kubernetes clusters.
+
+    ![Screen Shoot](./ss/gke-setup-4.jpg)
+
+
+# 6. Installing Google Cloud CLI and kubectl
+
+The Google Cloud CLI is a set of tools you use to create and manage Google Cloud resources from your terminal.
+
+## Step 1: Download and Install Google Cloud CLI
+
+Download the installer from the official link below and follow the installation instructions:
+
+https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe
+
+![Google Cloud SDK Installer](./ss/google-sdk-1.jpg)
+
+## Step 2: Initialize Google Cloud CLI
+
+After installation, open your terminal and run:
+
+```sh
+gcloud init
+```
+This command will help you set up your account and default project.
+
+## Step 3: Install kubectl and GKE Auth Plugin
+
+To manage Kubernetes clusters, install the following components:
+
+```sh
+gcloud components install kubectl
+gcloud components install gke-gcloud-auth-plugin
+gcloud components update
+```
+
+![Google Cloud SDK Components](./ss/google-sdk-2.jpg)
+
+
+
+# 7. Setup Cluster GKE
+
+
+## Step-by-Step: Creating a GKE Cluster
+
+1. **Create a New GKE Cluster**  
+    In the Google Cloud Console, go to Kubernetes Engine and click "Create Cluster" to start the setup process.
+
+    ![Create New GKE Cluster](./ss/gke-cluster-1.jpg)
+
+2. **Choose Regional Cluster**  
+    Select the "Regional" option to ensure your cluster is distributed across multiple zones for higher availability.
+
+    ![Choose Regional Cluster](./ss/gke-cluster-2.jpg)
+
+3. **Configure Node Pool**  
+    Set the number of worker nodes and choose the provisioning model (such as Standard or Autopilot) according to your needs.
+
+    ![Configure Node Pool](./ss/gke-cluster-3.jpg)
+
+4. **Select VM Specs for Worker Nodes**  
+    Pick the VM specifications (CPU, memory, etc.) for your worker nodes based on your workload requirements.
+
+    ![Select VM Specs](./ss/gke-cluster-4.jpg)
+
+
+# 8. Process Deployment
+
+Below are the basic steps to deploy your application and resources to your GKE cluster. Each step includes a short description and example command.
+
+---
+
+1. **Connect to the Cluster**  
+    Connect to your GKE cluster from the Google Cloud Console to start managing resources.
+
+    ![Connect to Cluster](./ss/gke-deploy-1.jpg)
+    ![Cluster Overview](./ss/gke-deploy-2.jpg)
+
+2. **Deploy ConfigMap**  
+    Create a ConfigMap to store environment configuration for your application.
+
+    ```sh
+    kubectl apply -f configmap.yaml -n dev
+    ```
+    ![Apply ConfigMap](./ss/gke-dep-configmap.jpg)
+    ![ConfigMap Created](./ss/gke-dep-configmap2.jpg)
+
+3. **Deploy Secrets**  
+    Add sensitive data (like passwords or certificates) using Secret resources.
+
+    ```sh
+    kubectl apply -f secret.yaml -n dev
+    kubectl apply -f secret-tls.yaml -n dev
+    ```
+    ![Apply Secret](./ss/gke-dep-secret.jpg)
+    ![Secret Created](./ss/gke-dep-secret2.jpg)
+
+4. **Deploy Deployment**  
+    Deploy your main application. For example, deploy an Nginx container from Docker Hub with 2 replicas.
+
+    ```sh
+    kubectl apply -f deployment.yaml -n dev
+    ```
+    ![Apply Deployment](./ss/gke-dep-deployment.jpg)
+    ![Deployment Created](./ss/gke-dep-deployment2.jpg)
+
+5. **Deploy StatefulSet**  
+    Deploy a stateful application, such as Redis, with 2 replicas. This ensures each instance has its own storage.
+
+    ```sh
+    kubectl apply -f statesfulset.yaml -n dev
+    ```
+    ![Apply StatefulSet](./ss/gke-dep-statesfulset.jpg)
+    ![StatefulSet Created](./ss/gke-dep-statesfulset2.jpg)
+   
+    Persistent volumes are automatically created for each replica.
+    ![Persistent Volume](./ss/gke-dep-statesfulset2.jpg)
+
+6. **Deploy Services**  
+    Expose your Deployments and StatefulSets with Service resources.
+
+    - For Nginx Deployment:
+      ```sh
+      kubectl apply -f service-1.yaml -n dev
+      ```
+      ![Nginx Service](./ss/gke-dep-service-ngnix.jpg)
+      ![Nginx Service Created](./ss/gke-dep-service-ngnix2.jpg)
+
+    - For Redis StatefulSet:
+      ```sh
+      kubectl apply -f service-2.yaml -n dev
+      ```
+      ![Redis Service](./ss/gke-dep-service-redis-statefulset.jpg)
+      ![Redis Service Created](./ss/gke-dep-service-redis-statefulset2.jpg)
+
+7. **Deploy Ingress**  
+    Set up Ingress to manage external HTTP/HTTPS access to your services.
+
+    ```sh
+    kubectl apply -f ingress.yaml -n dev
+    ```
+    ![Apply Ingress](./ss/gke-dep-ingriss.jpg)
+    ![Ingress Created](./ss/gke-dep-ingriss2.jpg)
+
+
+
+8. **Test Your App Using the Ingress Public IP**
+
+    After deploying Ingress, you can test your application by accessing the public IP address provided by the Ingress resource.
+
+    ![Test App via Ingress IP](./ss/gke-dep-ingriss3.jpg)
+
+    ![App Response via Ingress](./ss/gke-dep-ingriss3.jpg)
+
+9. **Set Up DNS (A Record) for Your Domain**
+
+    Get the public IP from your Ingress and create an A record in your DNS provider. This will point your domain name to the Ingress public IP, so users can access your app using a friendly URL.
+
+    ![Get Public IP](./ss/gke-dep-ingriss3.jpg)
+
+    Example: Set the A record to the Ingress public IP in your DNS dashboard.
+
+    ![Set A Record](./ss/dns.jpg)

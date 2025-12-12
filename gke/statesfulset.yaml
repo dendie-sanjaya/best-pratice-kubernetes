@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis-statefulset
+  namespace: dev
+spec:
+  serviceName: "redis-headless-service"
+  replicas: 2
+  selector:
+    matchLabels:
+      app: redis-db
+  template:
+    metadata:
+      labels:
+        app: redis-db
+    spec:
+      containers:
+      - name: redis
+        image: redis:latest 
+        args:
+        - "--requirepass"
+        - "$(REDIS_PASSWORD)" # Menggunakan variabel lingkungan dari Secret
+        env:
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: redis-secret # Nama Secret yang menyimpan password
+              key: redis-password # Key di dalam Secret yang berisi password
+        ports:
+        - containerPort: 6379
+          name: redis-port
+        
+        resources: # <<< BAGIAN RESOURCE DITAMBAHKAN
+          requests:
+            cpu: "250m"      # Minta 0.25 core CPU
+            memory: "256Mi"  # Minta 256 Megabyte memori
+          limits:
+            cpu: "500m"      # Batas maksimum 0.5 core CPU
+            memory: "512Mi"  # Batas maksimum 512 Megabyte memori
+            
+        volumeMounts:
+        - name: redis-data
+          mountPath: /data
+          
+  volumeClaimTemplates: 
+  - metadata:
+      name: redis-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi # Minta 1 GB Persistent Volume Claim (PVC) per Pod

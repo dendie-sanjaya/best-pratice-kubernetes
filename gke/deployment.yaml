@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  namespace: dev
+  labels:
+    app: nginx-web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx-web
+  template:
+    metadata:
+      labels:
+        app: nginx-web
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest 
+        ports:
+        - containerPort: 80
+        envFrom:
+        - configMapRef:
+            name: app-config
+        resources: # <<< BAGIAN INI DITAMBAHKAN
+          requests:
+            cpu: "100m"      # Minta 0.1 core CPU saat Pod dimulai
+            memory: "64Mi"   # Minta 64 Megabyte memori
+          limits:
+            cpu: "200m"      # Batas maksimum 0.2 core CPU
+            memory: "128Mi"  # Batas maksimum 128 Megabyte memori
