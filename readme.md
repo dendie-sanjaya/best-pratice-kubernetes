@@ -250,7 +250,7 @@ Below are the basic steps to deploy your application and resources to your GKE c
     ![StatefulSet Created](./ss/gke-dep-statesfulset2.jpg)
    
     Persistent volumes are automatically created for each replica.
-    ![Persistent Volume](./ss/gke-dep-statesfulset2.jpg)
+    ![Persistent Volume](./ss/gke-dep-statesfulset3.jpg)
 
 6. **Deploy Services**  
     Expose your Deployments and StatefulSets with Service resources.
