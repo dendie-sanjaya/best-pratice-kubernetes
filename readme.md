@@ -64,7 +64,7 @@ These components live outside the cluster but are crucial for its operation.
 A virtual way to divide the cluster's resources into separate, isolated rooms.
 Helps organize and separate teams or projects running on the same cluster (e.g., separating the env dev, env testing).
 
-## 3.2 Node Master
+## 3.3 Node Master
 
 This is the management layer that decides where things should run and keeps the cluster in the desired state.
 
@@ -82,7 +82,7 @@ This is the management layer that decides where things should run and keeps the 
 
 These are the machines where your applications actually run.
 
-#### 3.4.1 Workloads and Scaling
+### 3.4.1 Workloads and Scaling
 
 | Component     | Simple Description                                                        | Key Function & Relationship                                                |
 |---------------|--------------------------------------------------------------------------|----------------------------------------------------------------------------|
@@ -91,7 +91,7 @@ These are the machines where your applications actually run.
 | ReplicaSet    | The mechanism that guarantees a specific, stable number of identical Pods are always available. | Constantly monitors the Pods and immediately replaces any Pod that fails or crashes. |
 | StatefulSet   | Used for managing applications that require a unique identity and permanent storage (like databases). | Ensures a fixed order of deployment and gives each Pod its own specific name and dedicated storage. |
 
-#### 3.4.2 Data Storage
+### 3.4.2 Data Storage
 
 | Component              | Simple Description                                                        | Purpose                                                                  |
 |------------------------|----------------------------------------------------------------------------|--------------------------------------------------------------------------|
