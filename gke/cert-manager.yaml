@@ -1,0 +1,16 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: letsencrypt-dev
+  namespace: dev 
+spec:
+  acme:
+    email: dendie.sanjaya@gmail.com
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      # Secret ini (letsencrypt-prod) juga harus berada di namespace 'dev'
+      name: letsencrypt-dev
+    solvers:
+    - http01:
+        ingress:
+          class: nginx

@@ -4,20 +4,17 @@ metadata:
   name: dev-ingress
   namespace: dev
   annotations:
-    # Anotasi Nginx Controller: Rewrite target ke root path /
+    cert-manager.io/issuer: letsencrypt-dev
     nginx.ingress.kubernetes.io/rewrite-target: /
-    
-    # Anotasi Nginx Controller: Memaksa redirect HTTP ke HTTPS (optional)
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true" 
     
 spec:
-  # BAGIAN TLS (Tersedia jika Anda sudah membuat Secret sbiz-tls-secret)
+  # --- BLOK TLS WAJIB ADA UNTUK MENDAPATKAN SERTIFIKAT ---
   #tls:
   #- hosts:
-  #  - dev.sbiz-app.my.id
-  #  secretName: sbiz-tls-secret 
+  #  - reseller.sbiz-app.my.id
+  #  secretName: reseller-sbiz-tls-secret-vhvqd-vkpr9 # Secret yang akan dibuat oleh cert-manager
     
-  # --- DEFAULT BACKEND DITAMBAHKAN DI SINI ---
   defaultBackend:
     service:
       name: nginx-service

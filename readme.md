@@ -269,7 +269,17 @@ Below are the basic steps to deploy your application and resources to your GKE c
       ![Redis Service](./ss/gke-dep-service-redis-statefulset.jpg)
       ![Redis Service Created](./ss/gke-dep-service-redis-statefulset2.jpg)
 
-7. **Deploy Ingress**  
+7. **Deploy TSL / SSL **  
+    Set up TSS / SSL  use let letsencrypt, use certificate manage GKE will be automatic handle renewal 
+
+    ```sh
+    kubectl apply -f cert-manager.yaml -n dev
+    ```
+    ![ss](./ss/cert-manager.jpg)
+    ![ss](./ss/cert-manager-2.jpg)
+
+
+8. **Deploy Ingress**  
     Set up Ingress to manage external HTTP/HTTPS access to your services.
 
     ```sh
@@ -280,7 +290,7 @@ Below are the basic steps to deploy your application and resources to your GKE c
 
 
 
-8. **Test Your App Using the Ingress Public IP**
+9. **Test Your App Using the Ingress Public IP**
 
     After deploying Ingress, you can test your application by accessing the public IP address provided by the Ingress resource.
 
@@ -288,7 +298,9 @@ Below are the basic steps to deploy your application and resources to your GKE c
 
     ![App Response via Ingress](./ss/gke-dep-ingriss4.jpg)
 
-9. **Set Up DNS (A Record) for Your Domain**
+10. **Test Your App Using Domain**
+
+    Set Up DNS (A Record) for Your Domain
 
     Get the public IP from your Ingress and create an A record in your DNS provider. This will point your domain name to the Ingress public IP, so users can access your app using a friendly URL.
 
