@@ -1,5 +1,44 @@
+
+
 🚀 **Google Kubernetes Engine (GKE) Best Practice**
 
+Welcome to the Google Kubernetes Engine (GKE) Best Practice guide. This document provides a comprehensive overview, step-by-step instructions, and practical tips for deploying and managing applications on GKE
+
+## Table of Contents
+
+- [1. The Historical From Borg to Kubernetes](#1-the-historical-from-borg-to-kubernetes)
+- [2. When Should You Use Kubernetes?](#2-when-should-you-use-kubernetes)
+- [3. Architectural Best Practice](#3-architectural-best-practice)
+  - [3.1 External Services (The Doors and Supplies)](#31-external-services-the-doors-and-supplies)
+  - [3.2 Namespace](#32-namespace)
+  - [3.3 Node Master](#33-node-master)
+  - [3.4 Node Worker](#34-node-worker)
+    - [3.4.1 Workloads and Scaling](#341-workloads-and-scaling)
+    - [3.4.2 Data Storage](#342-data-storage)
+- [4. Mapping YAML ke to Resource GKE](#4-mapping-yaml-ke-to-resource-gke)
+- [5. Basic Setup GKE](#5-basic-setup-gke)
+- [6. Installing Google Cloud CLI and kubectl](#6-installing-google-cloud-cli-and-kubectl)
+  - [Step 1: Download and Install Google Cloud CLI](#step-1-download-and-install-google-cloud-cli)
+  - [Step 2: Initialize Google Cloud CLI](#step-2-initialize-google-cloud-cli)
+  - [Step 3: Install kubectl and GKE Auth Plugin](#step-3-install-kubectl-and-gke-auth-plugin)
+- [7. Setup Cluster GKE](#7-setup-cluster-gke)
+  - [7.1 Create a New GKE Cluster](#71-create-a-new-gke-cluster)
+  - [7.2 Choose Regional Cluster](#72-choose-regional-cluster)
+  - [7.3 Configure Node Pool](#73-configure-node-pool)
+  - [7.4 Select VM Specs for Worker Nodes](#74-select-vm-specs-for-worker-nodes)
+- [8. Process Deployment](#8-process-deployment)
+  - [8.1  Connect to the Cluster](#81--connect-to-the-cluster)
+  - [8.2. Deploy ConfigMap](#82-deploy-configmap)
+  - [8.3 Deploy Secrets](#83-deploy-secrets)
+  - [8.4 Deploy Deployment](#84-deploy-deployment)
+  - [8.5 Deploy StatefulSet](#85-deploy-statefulset)
+  - [8.6 Deploy Services](#86-deploy-services)
+  - [8.7 Deploy TSL / SSL](#87-deploy-tsl--ssl)
+  - [8.8 Deploy Ingress](#88-deploy-ingress)
+  - [8.9 Test Your App Using the Ingress Public IP](#89-test-your-app-using-the-ingress-public-ip)
+  - [8.10 Test Your App Using Domain](#810-test-your-app-using-domain)
+    - [8.10.1 Test Domain http via Browser](#8101-test-domain-http-via-browser)
+    - [8.10.2 Test Domain httphttps via Browser](#8102-test-domain-httphttps-via-browser)
 
 
 # 1. The Historical From Borg to Kubernetes
@@ -176,136 +215,154 @@ gcloud components update
 
 # 7. Setup Cluster GKE
 
+## 7.1 Create a New GKE Cluster
+In the Google Cloud Console, go to Kubernetes Engine and click "Create Cluster" to start the setup process.
 
-## Step-by-Step: Creating a GKE Cluster
+![Create New GKE Cluster](./ss/gke-cluster-1.jpg)
 
-1. **Create a New GKE Cluster**  
-    In the Google Cloud Console, go to Kubernetes Engine and click "Create Cluster" to start the setup process.
+## 7.2 Choose Regional Cluster
+Select the "Regional" option to ensure your cluster is distributed across multiple zones for higher availability.
 
-    ![Create New GKE Cluster](./ss/gke-cluster-1.jpg)
+![Choose Regional Cluster](./ss/gke-cluster-2.jpg)
 
-2. **Choose Regional Cluster**  
-    Select the "Regional" option to ensure your cluster is distributed across multiple zones for higher availability.
+## 7.3 Configure Node Pool
+Set the number of worker nodes and choose the provisioning model (such as Standard or Autopilot) according to your needs.
 
-    ![Choose Regional Cluster](./ss/gke-cluster-2.jpg)
+![Configure Node Pool](./ss/gke-cluster-3.jpg)
 
-3. **Configure Node Pool**  
-    Set the number of worker nodes and choose the provisioning model (such as Standard or Autopilot) according to your needs.
+## 7.4 Select VM Specs for Worker Nodes
+Pick the VM specifications (CPU, memory, etc.) for your worker nodes based on your workload requirements.
 
-    ![Configure Node Pool](./ss/gke-cluster-3.jpg)
-
-4. **Select VM Specs for Worker Nodes**  
-    Pick the VM specifications (CPU, memory, etc.) for your worker nodes based on your workload requirements.
-
-    ![Select VM Specs](./ss/gke-cluster-4.jpg)
+![Select VM Specs](./ss/gke-cluster-4.jpg)
 
 
 # 8. Process Deployment
 
 Below are the basic steps to deploy your application and resources to your GKE cluster. Each step includes a short description and example command.
 
----
+## 8.1  Connect to the Cluster  
+Connect to your GKE cluster from the Google Cloud Console to start managing resources.
 
-1. **Connect to the Cluster**  
-    Connect to your GKE cluster from the Google Cloud Console to start managing resources.
+![Connect to Cluster](./ss/gke-deploy-1.jpg)
+![Cluster Overview](./ss/gke-deploy-2.jpg)
 
-    ![Connect to Cluster](./ss/gke-deploy-1.jpg)
-    ![Cluster Overview](./ss/gke-deploy-2.jpg)
+## 8.2. Deploy ConfigMap 
+Create a ConfigMap to store environment configuration for your application.
 
-2. **Deploy ConfigMap**  
-    Create a ConfigMap to store environment configuration for your application.
+```sh
+kubectl apply -f configmap.yaml -n dev
+```
+![Apply ConfigMap](./ss/gke-dep-configmap.jpg)
+![ConfigMap Created](./ss/gke-dep-configmap2.jpg)
 
+## 8.3 Deploy Secrets  
+Add sensitive data (like passwords or certificates) using Secret resources.
+
+```sh
+kubectl apply -f secret.yaml -n dev
+kubectl apply -f secret-tls.yaml -n dev
+```
+![Apply Secret](./ss/gke-dep-secret.jpg)
+![Secret Created](./ss/gke-dep-secret2.jpg)
+
+## 8.4 Deploy Deployment  
+Deploy your main application. For example, deploy an Nginx container from Docker Hub with 2 replicas.
+
+```sh
+kubectl apply -f deployment.yaml -n dev
+```
+![Apply Deployment](./ss/gke-dep-deployment.jpg)
+![Deployment Created](./ss/gke-dep-deployment2.jpg)
+
+## 8.5 Deploy StatefulSet  
+Deploy a stateful application, such as Redis, with 2 replicas. This ensures each instance has its own storage.
+
+```sh
+kubectl apply -f statesfulset.yaml -n dev
+```
+![Apply StatefulSet](./ss/gke-dep-statesfulset.jpg)
+![StatefulSet Created](./ss/gke-dep-statesfulset2.jpg)
+
+Persistent volumes are automatically created for each replica.
+![Persistent Volume](./ss/gke-dep-statesfulset3.jpg)
+
+## 8.6 Deploy Services  
+Expose your Deployments and StatefulSets with Service resources.
+
+- For Nginx Deployment:
     ```sh
-    kubectl apply -f configmap.yaml -n dev
+    kubectl apply -f service-1.yaml -n dev
     ```
-    ![Apply ConfigMap](./ss/gke-dep-configmap.jpg)
-    ![ConfigMap Created](./ss/gke-dep-configmap2.jpg)
+    ![Nginx Service](./ss/gke-dep-service-ngnix.jpg)
+    ![Nginx Service Created](./ss/gke-dep-service-ngnix2.jpg)
 
-3. **Deploy Secrets**  
-    Add sensitive data (like passwords or certificates) using Secret resources.
-
+- For Redis StatefulSet:
     ```sh
-    kubectl apply -f secret.yaml -n dev
-    kubectl apply -f secret-tls.yaml -n dev
+    kubectl apply -f service-2.yaml -n dev
     ```
-    ![Apply Secret](./ss/gke-dep-secret.jpg)
-    ![Secret Created](./ss/gke-dep-secret2.jpg)
+    ![Redis Service](./ss/gke-dep-service-redis-statefulset.jpg)
+    ![Redis Service Created](./ss/gke-dep-service-redis-statefulset2.jpg)
 
-4. **Deploy Deployment**  
-    Deploy your main application. For example, deploy an Nginx container from Docker Hub with 2 replicas.
+## 8.7 Deploy TSL / SSL   
+Set up TSS / SSL  use let letsencrypt, use certificate manage GKE will be automatic handle renewal 
 
-    ```sh
-    kubectl apply -f deployment.yaml -n dev
-    ```
-    ![Apply Deployment](./ss/gke-dep-deployment.jpg)
-    ![Deployment Created](./ss/gke-dep-deployment2.jpg)
-
-5. **Deploy StatefulSet**  
-    Deploy a stateful application, such as Redis, with 2 replicas. This ensures each instance has its own storage.
-
-    ```sh
-    kubectl apply -f statesfulset.yaml -n dev
-    ```
-    ![Apply StatefulSet](./ss/gke-dep-statesfulset.jpg)
-    ![StatefulSet Created](./ss/gke-dep-statesfulset2.jpg)
-   
-    Persistent volumes are automatically created for each replica.
-    ![Persistent Volume](./ss/gke-dep-statesfulset3.jpg)
-
-6. **Deploy Services**  
-    Expose your Deployments and StatefulSets with Service resources.
-
-    - For Nginx Deployment:
-      ```sh
-      kubectl apply -f service-1.yaml -n dev
-      ```
-      ![Nginx Service](./ss/gke-dep-service-ngnix.jpg)
-      ![Nginx Service Created](./ss/gke-dep-service-ngnix2.jpg)
-
-    - For Redis StatefulSet:
-      ```sh
-      kubectl apply -f service-2.yaml -n dev
-      ```
-      ![Redis Service](./ss/gke-dep-service-redis-statefulset.jpg)
-      ![Redis Service Created](./ss/gke-dep-service-redis-statefulset2.jpg)
-
-7. **Deploy TSL / SSL **  
-    Set up TSS / SSL  use let letsencrypt, use certificate manage GKE will be automatic handle renewal 
-
-    ```sh
-    kubectl apply -f cert-manager.yaml -n dev
-    ```
-    ![ss](./ss/cert-manager.jpg)
-    ![ss](./ss/cert-manager-2.jpg)
+```sh
+kubectl apply -f cert-manager.yaml -n dev
+```
+![ss](./ss/cert-manager.jpg)
+![ss](./ss/cert-manager-2.jpg)
 
 
-8. **Deploy Ingress**  
-    Set up Ingress to manage external HTTP/HTTPS access to your services.
+## 8.8 Deploy Ingress  
+Set up Ingress to manage external HTTP/HTTPS access to your services.
 
-    ```sh
-    kubectl apply -f ingress.yaml -n dev
-    ```
-    ![Apply Ingress](./ss/gke-dep-ingriss.jpg)
-    ![Ingress Created](./ss/gke-dep-ingriss2.jpg)
+```sh
+kubectl apply -f ingress.yaml -n dev
+```
+![Apply Ingress](./ss/gke-dep-ingriss.jpg)
+![Ingress Created](./ss/gke-dep-ingriss2.jpg)
 
 
 
-9. **Test Your App Using the Ingress Public IP**
+## 8.9 Test Your App Using the Ingress Public IP
 
-    After deploying Ingress, you can test your application by accessing the public IP address provided by the Ingress resource.
+After deploying Ingress, you can test your application by accessing the public IP address provided by the Ingress resource.
 
-    ![Test App via Ingress IP](./ss/gke-dep-ingriss3.jpg)
+![Test App via Ingress IP](./ss/gke-dep-ingriss3.jpg)
 
-    ![App Response via Ingress](./ss/gke-dep-ingriss4.jpg)
+![App Response via Ingress](./ss/gke-dep-ingriss4.jpg)
 
-10. **Test Your App Using Domain**
+## 8.10 Test Your App Using Domain
 
-    Set Up DNS (A Record) for Your Domain
+Set Up DNS (A Record) for Your Domain
 
-    Get the public IP from your Ingress and create an A record in your DNS provider. This will point your domain name to the Ingress public IP, so users can access your app using a friendly URL.
+Get the public IP from your Ingress and create an A record in your DNS provider. This will point your domain name to the Ingress public IP, so users can access your app using a friendly URL.
 
-    ![Get Public IP](./ss/gke-dep-ingriss3.jpg)
+![Get Public IP](./ss/gke-dep-ingriss3.jpg)
 
-    Example: Set the A record to the Ingress public IP in your DNS dashboard.
+Example: Set the A record to the Ingress public IP in your DNS dashboard.
 
-    ![Set A Record](./ss/dns.jpg)
+![Set A Record](./ss/dns.jpg)
+
+Test use ping resolve your domain server 
+
+![ss](./ss/test-ping.jpg) 
+
+
+### 8.10.1 Test Domain http via Browser
+
+Test Domain http & https via Browser
+
+![ss](./ss/test-http-domain.jpg) 
+
+
+### 8.10.2 Test Domain httphttps via Browser
+
+Test Domain http & https via Browser
+
+![ss](./ss/test-http-domain.jpg) 
+
+
+
+
+    

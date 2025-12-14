@@ -10,10 +10,10 @@ metadata:
     
 spec:
   # --- BLOK TLS WAJIB ADA UNTUK MENDAPATKAN SERTIFIKAT ---
-  #tls:
-  #- hosts:
-  #  - reseller.sbiz-app.my.id
-  #  secretName: reseller-sbiz-tls-secret-vhvqd-vkpr9 # Secret yang akan dibuat oleh cert-manager
+  tls:
+  - hosts:
+    - reseller.sbiz-app.my.id
+    secretName: reseller-sbiz-tls-secret-vhvqd-vkpr9-kbtxk  # Secret yang akan dibuat oleh cert-manager
     
   defaultBackend:
     service:
