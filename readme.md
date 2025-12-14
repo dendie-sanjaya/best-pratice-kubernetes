@@ -38,7 +38,6 @@ Welcome to the Google Kubernetes Engine (GKE) Best Practice guide. This document
   - [8.9 Test Your App Using the Ingress Public IP](#89-test-your-app-using-the-ingress-public-ip)
   - [8.10 Test Your App Using Domain](#810-test-your-app-using-domain)
     - [8.10.1 Test Domain http via Browser](#8101-test-domain-http-via-browser)
-    - [8.10.2 Test Domain httphttps via Browser](#8102-test-domain-httphttps-via-browser)
 
 
 # 1. The Historical From Borg to Kubernetes
@@ -304,7 +303,7 @@ Expose your Deployments and StatefulSets with Service resources.
     ![Redis Service Created](./ss/gke-dep-service-redis-statefulset2.jpg)
 
 ## 8.7 Deploy TSL / SSL   
-Set up TSS / SSL  use let letsencrypt, use certificate manage GKE will be automatic handle renewal 
+Set up TSS / SSL  use let letsencrypt as issuer certificate, use certificate manage GKE will be automatic handle renewal 
 
 ```sh
 kubectl apply -f cert-manager.yaml -n dev
@@ -355,12 +354,6 @@ Test Domain http & https via Browser
 
 ![ss](./ss/test-http-domain.jpg) 
 
-
-### 8.10.2 Test Domain httphttps via Browser
-
-Test Domain http & https via Browser
-
-![ss](./ss/test-http-domain.jpg) 
 
 
 
